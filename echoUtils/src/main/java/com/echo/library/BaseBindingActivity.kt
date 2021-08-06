@@ -15,9 +15,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.echo.library.network.Subscription
 import com.echo.library.rv.HeaderAndFooterAdapter
 import com.echo.library.util.DialogUtils
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 /**
@@ -41,15 +41,10 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
         }
     }
 
-    protected fun updateData() {}
+    open fun updateData() {}
 
-    /**
-     * 需要sdk,但是却拉起来了，这里要干掉
-     */
-    fun needSDK(): Boolean {
-        return true
-    }
 
+    lateinit var subscription: Subscription
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -64,12 +59,13 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
                 binding.getRoot().viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
+        subscription = Subscription(this)
         getExtraData(intent)
         initView()
     }
 
-    protected fun getExtraData(intent: Intent?) {}
-    protected fun initView() {}
+    open fun getExtraData(intent: Intent) {}
+    open fun initView() {}
     var constraintLayoutH: ConstraintSet? = null
     var constraintLayoutV: ConstraintSet? = null
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -83,7 +79,7 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
      * 重置横竖布局
      * eg：有时候布局会有变化，需要重置
      */
-    fun resetVh() {
+    open fun resetVh() {
         constraintLayoutV = null
         constraintLayoutH = null
         vhInit()
@@ -93,7 +89,7 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
      * 需要切换布局的时候，根布局是ConstraintLayout的时候使用
      */
     @CallSuper
-    fun vhInit() {
+    open fun vhInit() {
         if (constraintLayoutV != null) {
             return
         }
@@ -109,14 +105,14 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
      * 竖屏 345*507
      * 横屏 507*331
      */
-    val standardBgView: View?
+    open val standardBgView: View?
         get() = null
 
     /**
      * @param isv 竖向布局
      */
     @CallSuper
-    fun vhSwitch(isv: Boolean) {
+    open fun vhSwitch(isv: Boolean) {
         if (vhGetRootConstraintLayout() == null) {
             return
         }
@@ -127,7 +123,7 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
     /**
      * 需要切换布局的时候，根布局是ConstraintLayout的时候使用
      */
-    fun vhGetRootConstraintLayout(): ConstraintLayout? {
+    open fun vhGetRootConstraintLayout(): ConstraintLayout? {
         return null
     }
 
@@ -143,32 +139,16 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
         DialogUtils.hideProgressDialog()
     }
 
-    protected var mCompositeDisposable: CompositeDisposable? = null
-    fun addSubscription(disposable: Disposable?) {
-        if (mCompositeDisposable == null) {
-            mCompositeDisposable = CompositeDisposable()
-        }
-        mCompositeDisposable!!.add(disposable!!) //将所有disposable放入,集中处理
+    fun addSubscription(disposable: Disposable) {
+        subscription.addSubscription(disposable)
     }
 
-    //RxJava解除订阅
-    protected fun unDispose() {
-        if (mCompositeDisposable != null) {
-            //保证LifecycleOwner结束时取消所有正在执行的订阅
-            mCompositeDisposable!!.clear()
-        }
-    }
 
-    public override fun onDestroy() {
-        super.onDestroy()
-        unDispose()
-    }
-
-    fun onClickBack(v: View?) {
+    open fun onClickBack(v: View?) {
         finish()
     }
 
-    public fun onFragmentDismiss(baseBindingDialogFragment: BaseBindingDialogFragment<*>) {
+    open fun onFragmentDismiss(baseBindingDialogFragment: BaseBindingDialogFragment<*>) {
 
     }
 }

@@ -56,12 +56,9 @@ abstract class BaseBindingDialogFragment<T : ViewDataBinding> : BaseVHDialogFrag
         return view
     }
 
-    fun onClickBack() {
-        dismiss()
-    }
 
-    fun onClickBack(view: View?) {
-        onClickBack()
+    open fun onClickBack(view: View?) {
+        dismiss()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

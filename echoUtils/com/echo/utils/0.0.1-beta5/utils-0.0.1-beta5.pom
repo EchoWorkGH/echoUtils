@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.echo</groupId>
   <artifactId>utils</artifactId>
-  <version>0.0.1-beta4</version>
+  <version>0.0.1-beta5</version>
   <packaging>aar</packaging>
   <dependencies>
     <dependency>
@@ -99,7 +99,7 @@
   </dependencies>
   <description>2021/8/5 转化部分kotlin</description>
   <git-branch>master</git-branch>
-  <git-gitCommitHash>34db13c8e942faeb259c627d6edd12ec408a0794</git-gitCommitHash>
-  <git-log>doc</git-log>
-  <build-time>2021-08-06 17:05:10</build-time>
+  <git-gitCommitHash>934b639700e0572a798794508af3e43a8cc6ff4c</git-gitCommitHash>
+  <git-log>beta4</git-log>
+  <build-time>2021-08-06 17:16:00</build-time>
 </project>
