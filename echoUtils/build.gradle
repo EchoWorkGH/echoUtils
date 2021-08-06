@@ -63,7 +63,7 @@ def theVersionNameCode = '0.0.1'
 apply plugin: 'maven'
 ///说明文档
 def DESCRIPTION = '2021/8/5 转化部分kotlin'
-def VERSION = theVersionNameCode + '-beta2'
+def VERSION = theVersionNameCode + '-beta3'
 
 uploadArchives {
     def GITHUB_REPO_PATH = "./"

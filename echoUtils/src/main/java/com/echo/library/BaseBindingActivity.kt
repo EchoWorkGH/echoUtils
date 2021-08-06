@@ -57,7 +57,7 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
                 or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         binding = DataBindingUtil.setContentView(this,
                 layoutId)
-        binding.getRoot().viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 vhInit()
                 vhSwitch(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)

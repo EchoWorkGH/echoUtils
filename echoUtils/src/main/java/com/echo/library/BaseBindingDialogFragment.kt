@@ -13,9 +13,9 @@ import androidx.annotation.Keep
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.echo.library.network.RxUtil
+import com.echo.library.network.Subscription
 import com.echo.library.rv.HeaderAndFooterAdapter
 import com.echo.library.util.DialogUtils
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 /**
@@ -33,16 +33,21 @@ abstract class BaseBindingDialogFragment<T : ViewDataBinding> : BaseVHDialogFrag
     protected abstract fun updateData() //更新数据
     protected lateinit var binding: T
     val headerAndFooterAdapter = HeaderAndFooterAdapter()
+    lateinit var subscription: Subscription
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_FRAME, R.style.TransparentTheme)
+        subscription = Subscription(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        if (dialog != null) {
-            dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+    override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
+    ): View? {
+        dialog?.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
                     or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
         val view = inflater.inflate(layoutId, container, false)
@@ -100,24 +105,9 @@ abstract class BaseBindingDialogFragment<T : ViewDataBinding> : BaseVHDialogFrag
         RxUtil.runMainThread { DialogUtils.hideProgressDialog() }
     }
 
-    protected var mCompositeDisposable: CompositeDisposable? = null
-    fun addSubscription(disposable: Disposable?) {
-        if (mCompositeDisposable == null) {
-            mCompositeDisposable = CompositeDisposable()
-        }
-        mCompositeDisposable!!.add(disposable!!) //将所有disposable放入,集中处理
+    fun addSubscription(disposable: Disposable) {
+        subscription.addSubscription(disposable)
     }
 
-    //RxJava解除订阅
-    protected fun unDispose() {
-        if (mCompositeDisposable != null) {
-            //保证LifecycleOwner结束时取消所有正在执行的订阅
-            mCompositeDisposable!!.clear()
-        }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unDispose()
-    }
 }
