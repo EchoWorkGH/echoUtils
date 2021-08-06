@@ -167,4 +167,8 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : AppCompatActivity() {
     fun onClickBack(v: View?) {
         finish()
     }
+
+    public fun onFragmentDismiss(baseBindingDialogFragment: BaseBindingDialogFragment<*>) {
+
+    }
 }

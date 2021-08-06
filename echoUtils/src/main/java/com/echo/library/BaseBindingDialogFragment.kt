@@ -109,5 +109,10 @@ abstract class BaseBindingDialogFragment<T : ViewDataBinding> : BaseVHDialogFrag
         subscription.addSubscription(disposable)
     }
 
-
+    override fun dismiss() {
+        super.dismiss()
+        if (context is BaseBindingActivity<*>) {
+            (context as BaseBindingActivity<*>).onFragmentDismiss(this)
+        }
+    }
 }
